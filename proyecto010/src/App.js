@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import mostrarTabla from './MostrarTabla';
 
 function App() {
 
     //Artículos almacena el resultado, y setArticulos controla el cambio del resultado.
     const [articulos, setArticulos] = useState([])
+    const [recuperado, setRecuperado] = useState(false)
 
     useEffect(() => {
         fetch('http://scratchya.com.ar/react/datos.php')
@@ -12,35 +14,16 @@ function App() {
             })
             .then((articulos_response) => {
                 setArticulos(articulos_response)
+                setRecuperado(true) //Pasar a true para mostrar tabla.
             })
+            //}, 2000); Tiempo de espera 2segs al then.
     }, [])
     
-    return (
-        <div>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Descripción</th>
-                        <th>Precio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* Recorremos artículos */}
-                    {articulos.map(art => {
-                        return (
-                            <tr key="{art.codigo}">
-                                <td>{art.codigo}</td>
-                                <td>{art.descripcion}</td>
-                                <td>{art.precio}</td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
-
-    );
+    if (recuperado) { //Cuando recuperado pase a true
+        return mostrarTabla(articulos)
+    } else { //Mientras recuperado es false
+        return (<div>recuperando datos..</div>)
+    }
 }
 
 export default App;
